@@ -78,6 +78,31 @@ echo ============================
 git lfs pull
 
 echo ============================
+echo Setting IP...
+echo ============================
+
+set "CONFIG_FILE=config.json"
+set "EXPECTED_IP=XXX.XX.XX.XXX"
+
+findstr /c:"%EXPECTED_IP%" "%CONFIG_FILE%" >nul
+
+if %errorlevel%==0 (
+    echo config.json already configured.
+) else (
+    echo Updating config.json...
+
+    powershell -Command ^
+    "$content = Get-Content '%CONFIG_FILE%';" ^
+    "$remaining = $content[3..($content.Length-1)];" ^
+    "'{' | Set-Content '%CONFIG_FILE%';" ^
+    "'  ""ip_address"": ""%EXPECTED_IP%"",' | Add-Content '%CONFIG_FILE%';" ^
+    "'  ""ip_management"" : ""%EXPECTED_IP%"",' | Add-Content '%CONFIG_FILE%';" ^
+    "$remaining | Add-Content '%CONFIG_FILE%'"
+
+    echo config.json updated.
+)
+
+echo ============================
 echo Running Client...
 echo ============================
 

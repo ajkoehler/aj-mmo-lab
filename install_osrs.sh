@@ -73,6 +73,34 @@ echo "============================"
 git lfs pull
 
 echo "============================"
+echo "Setting Server IP..."
+echo "============================"
+
+CONFIG_FILE="config.json"
+
+EXPECTED_IP="XXX.XX.XX.XXX"
+
+if grep -q "\"ip_address\": \"$EXPECTED_IP\"" "$CONFIG_FILE"; then
+    echo "config.json already configured."
+else
+    echo "Updating config.json..."
+
+    tail -n +4 "$CONFIG_FILE" > config.tmp
+
+    cat > "$CONFIG_FILE" <<EOF
+{
+  "ip_address": "$EXPECTED_IP",
+  "ip_management" : "$EXPECTED_IP",
+EOF
+
+    cat config.tmp >> "$CONFIG_FILE"
+
+    rm config.tmp
+
+    echo "config.json updated."
+fi
+
+echo "============================"
 echo "Running Client..."
 echo "============================"
 
